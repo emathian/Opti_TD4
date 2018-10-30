@@ -31,11 +31,6 @@
 \usepackage[compact]{titlesec}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{sectsty}
-\titlespacing{#1}{1}{#3}
-
-
-
-
 
 \xdefinecolor{gray}{named}{lightgray}
 \xdefinecolor{alice}{named}{AliceBlue}
@@ -229,7 +224,36 @@ Rappelons que le choix du nombre d'itérations maximale influence également la 
 \end{minipage}}
 \end{center}
 \newpage
-\subsection{Fonction de $\mathbb{R^2}$ dans $\mathbb{R}$}
-Nous étudions la fonction $g(x,y)= x^4-x^3-20x^2+x+1 +y^4-y^3-20y^2+y+1$; cette fonction a été dans le TD 1 exercice 3; ainsi nous savons qu'elle possède 9 points caractéristique, un maximum local, quatre points selle , et 4 minimum dont un minimm global.
+\subsection{Fonction de $\mathbb{R}^2$ dans $\mathbb{R}$}
+Nous étudions la fonction $g(x,y)= x^4-x^3-20x^2+x+1 +y^4-y^3-20y^2+y+1$; cette fonction a été dans le TD 1 exercice 3; ainsi nous savons qu'elle possède 9 points caractéristique, un maximum local, quatre points selle , et 4 minimum dont un minimum global \textbf{[\ref{Q21}}.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{Q21.png}
+\caption{Représentation de la fonction g et de ces quatre minimums, et de leurs coordonnées.}
+\label{Q21}
+\end{figure}
+
+\begin{minipage}{0.5\textwidth}
+Nous reprenons l'analyse des paramètres avec la même stratégie que dans le cas précédent ainsi en fixant $k'=0.5$, $x_0=0$, $y_0=0$ et $t_{max}=10000$ nous faisons varier $k$ tel que $k\in [0,30]$ . Graphiquement il est difficile de conclure sur l'influence du paramètre \textbf{[\ref{Q2K}]}
+. 
+\end{minipage} \hfill
+\begin{minipage}{0.45\textwidth}
+\begin{figure}[H]
+\includegraphics[width=1\textwidth]{Q2K.png}
+\caption{Représentation de la fonction g et de ces quatre minimums, et de leurs coordonnées.}
+\label{Q2K}
+\end{figure}
+\end{minipage}
+
+C'est pourquoi nous allons tenter de mettre en place un test statistique pour savoir si le nombre de succès de l'algorithme (convergence vers le minimum global) est fonction du paramètre $k$. Pour cela nous choisissons de séparer les valeurs de $k$ testées en deux échantillons et ainsi d'établir les hypothèse suivantes :
+\begin{align*}
+    H_O : \quad S_{k<15} &=  S_{k>15} \\
+    H_1 : \quad S_{k>15} &>  S_{k>15}
+\end{align*}
+
+Pour réaliser ce test nous générons 15 simulations ou nous faisons varier $k$, pour chaque simulation nous retenons la proportion de succès pour $k<15$ et pour $k>15$. Puis par un test de Student unilatéral pour comparer les moyennes des échantillons simulés. Nous calculons la valeur de T tel que $$T = \frac{\Bar{S_{k>15} - \Bar{S_{k<15}}}}{\sqrt{\frac{s'^2_{k>15}}{15} + \frac{s'^2_{k<15}}{15}}    }$$
+Nous obtiendrons ensuite la pvalue grâce à la librairie \verb|scipy.stats.t|.
+D'après nos résultats nous observons que le nombre de succès pour $k>15$ est statiquement supérieur que lorsque $k<15$
+
 
    \end{document}
