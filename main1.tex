@@ -176,10 +176,56 @@ D'après la représentation de la fonction $f(x)$ \textbf{[\ref{Q1}}, nous obser
   \caption{Étude de l'écart entre la solution calculée et la solution analytique pour 10000 itération avec $x_0 = 0.5$, et pour \textbf{a} $kp=0.5$ et $k\in [0,30]$ et  pour \textbf{b} $kp \in [0,1]$ et $k= 10$}
   \label{fig:ab}
 \end{figure}
-D'après la figure \textbf{[\ref{fig:a}]}, on observe que l'algorithme converge plus fréquemment vers le minimum local lorsque k est faible, la densité du nuage de point, pour $f(\hat{x_opt}- f(x_opt)) \simeq 60$ , est plus forte à gauche. Ainsi plus on permet à l'algorithme d'inspecter un voisinage éloigné du $x$ courant plus  la probabilité de trouver le minimum global croit.  À l'inverse d'après la figure \textbf{[\ref{fig:b}]} plus $k'$ augmente (noté kp) augmente plus la probabilité de converger vers le minimum local augmente, la densité du nuage de point pour  $f(\hat{x_opt}- f(x_opt)) \simeq 60$ , est plus forte à droite. Ainsi plus on abaisse la probabilité d'accepter un point qui augmentait localement le coût plus la probabilité de converger vers le minimum global croît.
+D'après la figure \textbf{[\ref{fig:a}]}, on observe que l'algorithme converge plus fréquemment vers le minimum local lorsque k est faible, la densité du nuage de point, pour $f(\hat{x_opt}- f(x_opt)) \simeq 60$ , est plus forte à gauche. Ainsi plus on permet à l'algorithme d'inspecter un voisinage éloigné du $x$ courant plus  la probabilité de trouver le minimum global croit.  À l'inverse d'après la figure \textbf{[\ref{fig:b}]} plus $k'$ augmente (noté kp) augmente plus la probabilité de converger vers le minimum local augmente, la densité du nuage de point pour  $f(\hat{x_opt}- f(x_opt)) \simeq 60$ , est plus forte à droite. Ainsi plus on abaisse la probabilité d'accepter un point qui augmentait localement le coût plus la probabilité de converger vers le minimum global croît. Néanmoins ces remarques semblent approximatives et pourraient être dues au hasard.//
+C'est pourquoi nous allons tenter de mettre en place un test statistique pour savoir si le nombre de succès de l'algorithme (convergence vers le minimum global) est fonction des paramètres $k$ ou $kp$. Pour cela nous choisissons de séparer les valeurs du paramètre  testées en deux échantillons et ainsi d'établir les hypothèse suivantes :
+\begin{align*}
+    H_O : \quad S_{k<m} &=  S_{k>m} \\
+    H_1 : \quad S_{k>m} &>  S_{k>m}
+\end{align*}
+
+Pour réaliser ce test nous générons 15 simulations ou nous faisons varier le paramètre, pour chaque simulation nous retenons la proportion de succès dans chacune des deux parties soit pour $k<1m$ et pour $k>m$. Puis par un test de Student unilatéral pour comparer les moyennes des échantillons simulés. Nous calculons la valeur de T tel que $$T = \frac{\Bar{S_{k>15} - \Bar{S_{k<m}}}}{\sqrt{\frac{s'^2_{k>m}}{n_1} + \frac{s'^2_{k<m}}{n_2}}    }$$
+Nous obtiendrons ensuite la pvalue grâce à la librairie \verb|scipy.stats.t|.
+
+% Résultat du test  k 
+\begin{scriptsize}
+\begin{verbatim}
+# Paramètres à tester k:
+> K = seq(0,15,0.5)  k' moy = 0.7.5   
+> Nombre de k testé :  n_inf = 30 ; n_sup = 30
+# Paramètres de la simulation : 
+> Nombre de répétition : n = 40
+> k' = 0.5 , tmax = 10000, x0 = random.unif(-5,5)
+# Définition du test :
+> H0 : Nb_succès_moyen | k <7.5 = Nb_succès_moyen | k >7.5 
+> H1 : Nb_succès_moyen | k <7.5 < Nb_succès_moyen | k >7.5 
+# Résultats :
+> Stat_t = 2.629
+> P_value = 5e-3
+# Conclusion : On rejette H0 au risque 5\%
+\end{verbatim}
+\end{scriptsize}
+\\
+\begin{scriptsize}
+\begin{verbatim}
+# Paramètres à tester k':
+> K' = seq(0,0.5,0.02)  k' moy = 0.25   
+> Nombre de k testé :  n_inf = 25 ; n_sup = 25
+# Paramètres de la simulation : 
+> Nombre de répétition : n = 40
+> k = 10 , tmax = 10000, x0 = random.unif(-5,5)
+# Définition du test :
+> H0 : Nb_succès_moyen | k <0.25 = Nb_succès_moyen | k >0.25 
+> H1 : Nb_succès_moyen | k <0.25 > Nb_succès_moyen | k >0.25 
+# Résultats :
+> Stat_t = 2.269
+> P_value = 0.012
+# Conclusion : On rejette H0 au risque 5\%
+\end{verbatim}
+\end{scriptsize}
+
+Ces conclusions sont vrais si on s'interesse sur l'intervalle $k'\in[0,05]$, en effet si on réalise ce test sur $[0,1]$ la différence de moyennes n'est plus significatives !
 
 \begin{minipage}{0.5\textwidth}
-
 D'après la figure \textbf{[\ref{Q1_T}]}, nous observons que si le nombre d'itération est trop faible $t_{max}<1500$ l'algorithme n'a pa le 'temps' de converger si $t_{max}$ est supérieur à ce seuil alors l'algorithme convergera vers l'un des deux minimums.
 \end{minipage} \hfill
 \begin{minipage}{0.45\textwidth}
@@ -235,7 +281,7 @@ Nous étudions la fonction $g(x,y)= x^4-x^3-20x^2+x+1 +y^4-y^3-20y^2+y+1$; cette
 
 \begin{minipage}{0.5\textwidth}
 Nous reprenons l'analyse des paramètres avec la même stratégie que dans le cas précédent ainsi en fixant $k'=0.5$, $x_0=0$, $y_0=0$ et $t_{max}=10000$ nous faisons varier $k$ tel que $k\in [0,30]$ . Graphiquement il est difficile de conclure sur l'influence du paramètre \textbf{[\ref{Q2K}]}
-. 
+. Il en est de même en faisant varier $k'$ les autres paramètres restant égaux par ailleurs.
 \end{minipage} \hfill
 \begin{minipage}{0.45\textwidth}
 \begin{figure}[H]
@@ -244,16 +290,28 @@ Nous reprenons l'analyse des paramètres avec la même stratégie que dans le ca
 \label{Q2K}
 \end{figure}
 \end{minipage}
-
-C'est pourquoi nous allons tenter de mettre en place un test statistique pour savoir si le nombre de succès de l'algorithme (convergence vers le minimum global) est fonction du paramètre $k$. Pour cela nous choisissons de séparer les valeurs de $k$ testées en deux échantillons et ainsi d'établir les hypothèse suivantes :
-\begin{align*}
-    H_O : \quad S_{k<15} &=  S_{k>15} \\
-    H_1 : \quad S_{k>15} &>  S_{k>15}
-\end{align*}
-
-Pour réaliser ce test nous générons 15 simulations ou nous faisons varier $k$, pour chaque simulation nous retenons la proportion de succès pour $k<15$ et pour $k>15$. Puis par un test de Student unilatéral pour comparer les moyennes des échantillons simulés. Nous calculons la valeur de T tel que $$T = \frac{\Bar{S_{k>15} - \Bar{S_{k<15}}}}{\sqrt{\frac{s'^2_{k>15}}{15} + \frac{s'^2_{k<15}}{15}}    }$$
-Nous obtiendrons ensuite la pvalue grâce à la librairie \verb|scipy.stats.t|.
-D'après nos résultats nous observons que le nombre de succès pour $k>15$ est statiquement supérieur que lorsque $k<15$
+\\
+Nous utilisons le test statistique mis en place pour analyser ces résultats :
+\begin{itemize}
+    \item Pour comprendre l'effet de $k$, nous testons si le nombre de succès est supérieur lorsque k est supérieur à 7.5 par rapport aux situations où k est inférieur à 7.5. Nous trouvons une statistique de 2.079 et une pvalue de  $1e-3$, nous rejetons donc H0 ($H0 : \quad \hat{s}_{k<7.5} =\hat{s}_{k>7.5} \quad;  H1 :\quad \hat{s}_{k<7.5} < \hat{s}_{k>7.5} $).
+    \item Pour comprendre l'effet de $k'$, nous testons si le nombre de succès est supérieur lorsque k est inférieur à 0.5 par rapport aux situations où k est inférieur  à 05. Nous trouvons une statistique de 2.23 et une pvalue de  $1e-3$, nous rejetons donc H0 ($H0 : \hat{s}_{k'<0.5} =\hat{s}_{k'>0.5}  \quad;  H1 :\quad \hat{s}_{k<7.5} < \hat{s}_{k>7.5} $).
+\end{itemize}
 
 
-   \end{document}
+\subsection{Compréhension de l’algorithme}
+\textbf{\color{brick}1.} L'algorithme du recuit simulé explore l'espace de façon aléatoire, ce type de recherche du minimum peut être bénéfique lorsque :
+\begin{itemize}
+    \item la fonction à minimiser n'est pas dérivable,
+    \item la fonction à minimiser n'est pas continue,
+    \item l'algorithme 'chute' dans un minimum local, il peut le contourner.
+\end{itemize}
+\textbf{\color{brick}2.} La température intervient deux fois dans l'algorithme du recuit simulé. Une première fois dans le choix d'un $x$ voisin de la position courante avec $X_{t+1}= x_t + N(0, ke^{-1/1000T})$, et une seconde fois dans la probabilité d'accepter un $x$ induisant une augmentation de la fonction de coût. En début de simulation  $T =1$ le voisinage es définit sur un grand espace et la probabilité d'accepter ce voisin est relativement grande, en fin de simulation $T$ est faible alors la recherche de voisins est réalisée dans une surface petite et la probabilité d'acceptation est faible. \\
+Par analogie aux processus de recuit en début de processus le niveau d'énergie du système, auquel peut être associé la fonction de coût, est relativement grand, ce niveau d'énergie fluctue ensuite aléatoirement jusqu'à atteindre d'un équilibre thermique. De plus en physique la loi de Bolltzman nous apprend que la probabilité d'observer un système à une énergie donné $E$ est fonction de la température de l'environnement telle que $e^{-E/T}$, ainsi plus la température diminue plus la probabilité d'observer cet état diminue.  \\
+En d'autre terme à l'initiation du processus l'algorithme procède à une recherche 'naïve' sans connaissance de l'environnement énergétique, ainsi l'algorithme progresse  par  oscillations, puis l'ampleur de ces oscillations est diminue avec la température. À la fin du processus les oscillations sont quasi nuls ce qui nous permet de conclure à la convergence de l'algorithme.\\
+Cependant la convergence vers un minimum global n'est pas garanti, il dépend d'un compromis entre le temps de calcul et le meilleur résultat possible. En effet si la décroissance thermique est trop rapide l'algorithme perd rapidement en 'souplesse' et risque de converger vers un minimum local.
+
+% REF 
+
+
+
+\end{document}
