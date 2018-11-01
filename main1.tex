@@ -305,12 +305,14 @@ Nous utilisons le test statistique mis en place pour analyser ces résultats :
     \item la fonction à minimiser n'est pas continue,
     \item l'algorithme 'chute' dans un minimum local, il peut le contourner.
 \end{itemize}
+\vspace{0.5cm}
 \textbf{\color{brick}2.} La température intervient deux fois dans l'algorithme du recuit simulé. Une première fois dans le choix d'un $x$ voisin de la position courante avec $X_{t+1}= x_t + N(0, ke^{-1/1000T})$, et une seconde fois dans la probabilité d'accepter un $x$ induisant une augmentation de la fonction de coût. En début de simulation  $T =1$ le voisinage es définit sur un grand espace et la probabilité d'accepter ce voisin est relativement grande, en fin de simulation $T$ est faible alors la recherche de voisins est réalisée dans une surface petite et la probabilité d'acceptation est faible. \\
 Par analogie aux processus de recuit en début de processus le niveau d'énergie du système, auquel peut être associé la fonction de coût, est relativement grand, ce niveau d'énergie fluctue ensuite aléatoirement jusqu'à atteindre d'un équilibre thermique. De plus en physique la loi de Bolltzman nous apprend que la probabilité d'observer un système à une énergie donné $E$ est fonction de la température de l'environnement telle que $e^{-E/T}$, ainsi plus la température diminue plus la probabilité d'observer cet état diminue.  \\
 En d'autre terme à l'initiation du processus l'algorithme procède à une recherche 'naïve' sans connaissance de l'environnement énergétique, ainsi l'algorithme progresse  par  oscillations, puis l'ampleur de ces oscillations est diminue avec la température. À la fin du processus les oscillations sont quasi nuls ce qui nous permet de conclure à la convergence de l'algorithme.\\
-Cependant la convergence vers un minimum global n'est pas garanti, il dépend d'un compromis entre le temps de calcul et le meilleur résultat possible. En effet si la décroissance thermique est trop rapide l'algorithme perd rapidement en 'souplesse' et risque de converger vers un minimum local.
-
-% REF 
+Cependant la convergence vers un minimum global n'est pas garanti, il dépend d'un compromis entre le temps de calcul et le meilleur résultat possible. En effet si la décroissance thermique est trop rapide l'algorithme perd rapidement en 'souplesse' et risque de converger vers un minimum local.\\
+\\
+\textbf{\color{brick}3.} Comme nous l'avions expliqué $k'$ permet de pondérer la probabilité d'acceptation de voisins induisant une augmentation de la fonction de coût. Plus on diminue $k'$ plus on restreint l'exploration, on pourrait ainsi  augmenter l'efficacité mais ceci dépend de la condition initiale. En étant laxiste envers l'erreur on augmente l'aire explorée mais là encore  on ne garantit pas la convergence vers un minimum global. Il existe une valeur optimale de $k'$.\\
+Le paramètre $k$ pondère l'ampleur des oscillation, à l'instar du paramètre $k'$ une augmentation de $k$ accroît l'aire explorée et donne une certaine souplesse à l'algorithme, réciproquement une diminution de $k$ pourrait augmenter la vitesse de convergence à condition d'être dans le voisinage du minimum global.
 
 
 
